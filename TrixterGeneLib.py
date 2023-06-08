@@ -676,7 +676,6 @@ class Time:
         self.df_features = self.df_features[0:0] # удаление всех строк в df_features
         for key,value in self.mobile_dict.items():
             self.add_row_to_df_features(name = key,age = value.age,is_alive = value.is_alive)
-        self.df_features['number_of_edges'] = self.df_features.groupby('name')['name'].transform('count')
     
     def add_row_to_mobile_graph(self,name1,name2,distance):
         is_alive1 = self.mobile_dict[name1].is_alive
@@ -699,4 +698,3 @@ class Time:
                     self.add_row_to_mobile_graph(key,key2,distance_res)
                     dict_for_check[key2+key] = 1
         self.mobile_graph = self.mobile_graph[self.mobile_graph['distance'] <= epsilon]
-        self.mobile_graph['number_of_edges'] = self.mobile_graph.groupby('name1')['name1'].transform('count')
