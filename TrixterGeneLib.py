@@ -150,7 +150,7 @@ class Blast_table:
                 # + полученное объединение
             return all_possible_clusters # Теперь среди возможных кластеров нет пересечений
 
-        def merge_sets_with_mu(set_array, all_names, mu): # Объединяет компоненты связности для mu != 1
+        def merge_sets_with_mu(set_array, mu = mu): # Объединяет компоненты связности для mu != 1
             set_list = [set(x) for x in set_array]
             while True:
                 merged = False
@@ -185,7 +185,7 @@ class Blast_table:
             no_reverse_repeats_df = pd.DataFrame(names.T, columns=['qseqid', 'sseqid']).drop_duplicates() # Больше нет строк
             # повторяющих одну и ту же пару
             try:
-                all_possible_c = all_possible_clusters(no_reverse_repeats_df)
+                all_possible_c = all_possible_clusters(connected_column)
                 clusters = sets_to_clusters(all_possible_c,connected_column)
                 clusters_dict = {"Cluster " + str(index + 1) : value for index, value in enumerate(clusters)}
                 clusters_dict['Anomalies'] = anomalies
@@ -207,8 +207,8 @@ class Blast_table:
             no_reverse_repeats_df = pd.DataFrame(names.T, columns=['qseqid', 'sseqid']).drop_duplicates() # Больше нет строк
             # повторяющих одну и ту же пару
             try:
-                all_possible_c = merge_sets_with_mu(no_reverse_repeats_df)
-                clusters = sets_to_clusters(all_possible_c,connected_column,mu)
+                clusters = merge_sets_with_mu(all_possible_clusters(no_reverse_repeats_df),mu)
+                #clusters = sets_to_clusters(all_possible_c,mu)
                 clusters_dict = {"Cluster " + str(index + 1) : value for index, value in enumerate(clusters)}
                 clusters_dict['Anomalies'] = anomalies
                 self.clusters = clusters_dict,epsilon,mu
@@ -333,7 +333,7 @@ def blast_dbscan(df,epsilon,mu = 1):
             # + полученное объединение
         return all_possible_clusters # Теперь среди возможных кластеров нет пересечений
     
-    def merge_sets_with_mu(set_array, all_names, mu): # Объединяет компоненты связности для mu != 1
+    def merge_sets_with_mu(set_array, mu): # Объединяет компоненты связности для mu != 1
         set_list = [set(x) for x in set_array]
         while True:
             merged = False
@@ -390,8 +390,8 @@ def blast_dbscan(df,epsilon,mu = 1):
         no_reverse_repeats_df = pd.DataFrame(names.T, columns=['qseqid', 'sseqid']).drop_duplicates() # Больше нет строк
         # повторяющих одну и ту же пару
         try:
-            all_possible_c = merge_sets_with_mu(no_reverse_repeats_df)
-            clusters = sets_to_clusters(all_possible_c,connected_column,mu)
+            clusters = merge_sets_with_mu(all_possible_clusters(no_reverse_repeats_df),mu)
+            #clusters = sets_to_clusters(all_possible_c,mu)
             clusters_dict = {"Cluster " + str(index + 1) : value for index, value in enumerate(clusters)}
             clusters_dict['Anomalies'] = anomalies
             return clusters_dict
